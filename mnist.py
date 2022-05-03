@@ -5,7 +5,7 @@ from torch import optim
 from torchvision import datasets,transforms
 from torch.utils.data import DataLoader
 
-device = torch.device('cpu')
+device = torch.device('cuda')
 # 载入训练集
 train_dataset = datasets.MNIST(root='./MNIST/',
                                train=True, # 载入训练集
