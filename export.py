@@ -2,7 +2,8 @@ import torch
 from torch import nn
 from model import  *
 dummy_input=torch.randn(10,3,256,256,device='cuda')
-ckpt = torch.load("f://GNR_checkpoint_full.pt", map_location=lambda storage, loc: storage)
+dummy_lat = torch.randn([10,8]).to('cuda')
+ckpt = torch.load("./GNR_checkpoint_full.pt", map_location=lambda storage, loc: storage)
 device='cuda'
 G_A2B = Generator( 256, 3, 8, 5, lr_mlp=0.01, n_res=1).to(device)
 G_A2B = nn.DataParallel(G_A2B).cuda()
@@ -23,11 +24,26 @@ print(torch.cuda.is_available())
 if __name__=="__main__":
     input_names = ["input"]
     output_names = ["output"]
-
-    torch.onnx.export(G_A2B,
+    torch.onnx.export(D_B,
                   dummy_input,
-                  "G_A2B.onnx",
+                  "D_B.onnx",
                   verbose=True,
+                  opset_version=10,
                   input_names=input_names,
                   output_names=output_names)
-
+    torch.onnx.export(D_L,
+                  dummy_lat,
+                  "D_L.onnx",
+                  verbose=True,
+                  opset_version=10,
+                  input_names=input_names,
+                  output_names=output_names)
+"""
+    torch.onnx.export(G_A2B.module,
+                  dummy_input,
+                  "G_B2A.onnx",
+                  verbose=True,
+                  opset_version=10,
+                  input_names=input_names,
+                  output_names=output_names)
+"""
